@@ -5,6 +5,9 @@ var io = require('socket.io').listen(server);
 var ent = require('ent'); // Permet de bloquer les caractères HTML (sécurité équivalente à htmlentities en PHP)
 var fs = require('fs');
 var users = {};
+
+var port = process.env.PORT || process.env.APP_PORT || 8000;
+
 app.use(express.static(__dirname + '/public'));
 
 
@@ -45,4 +48,4 @@ io.sockets.on('connection', function (socket, pseudo) {
 
 
 
-server.listen(8000);
+server.listen(port);

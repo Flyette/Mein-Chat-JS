@@ -11,8 +11,10 @@
         "socket.io": "~1.2.1",
 
         "ent": "~0.1.0"
-
     },
+    "scripts": { "start": "node index.js",
+     "dev":"APP_PORT=8000 node index.js" },
+
 
     "author": "Flyette <sehli.hayate@live.fr>",
 
