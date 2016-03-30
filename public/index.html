@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Mein Chat!</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/semantic-ui/0.13.0/css/semantic.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Libre+Baskerville' rel='stylesheet' type='text/css'>
+
+</head>
+
+<body>
+    <h1>ChatOns Nous dans les Bois!!</h1>
+
+    <p>Connectés</p>
+    <ul id="connected"></ul>
+
+    <div id="chat">
+
+        <section id="zone_chat">
+        </section>
+    </div>
+
+
+    <form class="ui form" action="/" method="post" id="formulaire_chat">
+        <label id="instruction">Ecris ton message là, juste en dessous de ce que tu es en train de lire!!!!!</label>
+        <input type="text" name="message" id="message" placeholder="Votre message..." size="50" autofocus />
+        <input class="ui secondary button" type="submit" id="envoi_message" value="Poster" />
+    </form>
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+            // Connexion à socket.io
+            var socket = io.connect('http://192.168.1.61:8000');
+
+            // On demande le pseudo, on l'envoie au serveur et on l'affiche dans le titre
+            var pseudo = prompt('Quel est votre pseudo ?');
+            socket.emit('nouveau_client', pseudo);
+            document.title = pseudo + ' - ' + document.title;
+
+            // Quand on reçoit un message, on l'insère dans la page
+            socket.on('message', function(data) {
+                insereMessage(data.pseudo, data.message, data.dateString)
+            })
+
+            // Quand un nouveau client se connecte, on affiche l'information
+            socket.on('nouveau_client', function(pseudo) {
+                $('#zone_chat').prepend('<p class="user_join"><em>' + pseudo + ' a rejoint le Chat !</em></p>');
+            })
+
+            socket.on('connected', function(users){
+                //Ajoute les personnes connectées
+                $('#connected').html('');
+                for(var user in users){
+                    var name = users[user].name;
+                    $('#connected').prepend('<li>' + name + '<li>');
+                }
+
+            })
+
+            // Lorsqu'on envoie le formulaire, on transmet le message et on l'affiche sur la page
+            $('#formulaire_chat').submit(function () {
+                var message = $('#message').val();
+                var myDate = new Date();
+                //Afficher heure
+                var dateString = myDate.toLocaleDateString() + " " + myDate.toLocaleTimeString();
+                socket.emit('message', message); // Transmet le message aux autres
+                insereMessage(pseudo, message, dateString); // Affiche le message aussi sur notre page
+                $('#message').val('').focus(); // Vide la zone de Chat et remet le focus dessus
+                return false; // Permet de bloquer l'envoi "classique" du formulaire
+            });
+            
+            // Ajoute un message dans la page
+            function insereMessage(pseudo, message, dateString) {
+                $('#zone_chat').append('<p><strong><i class="user icon"></i>' + pseudo + ' ' + dateString +' </strong><br>' + message + '</p><hr>');
+            }
+
+        </script>
+    </body>
+    </html>

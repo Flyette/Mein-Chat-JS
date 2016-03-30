@@ -1,0 +1,21 @@
+{
+
+    "name": "super-chat",
+
+    "version": "0.1.0",
+
+    "dependencies": {
+
+        "express": "~4.13.4",
+
+        "socket.io": "~1.2.1",
+
+        "ent": "~0.1.0"
+
+    },
+
+    "author": "Flyette <sehli.hayate@live.fr>",
+
+    "description": "Un super Chat temps réel avec socket.io"
+
+}
